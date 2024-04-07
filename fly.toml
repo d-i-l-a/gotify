@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'go-spordlfy'
+app = 'gotify'
 primary_region = 'ams'
 
 
@@ -14,7 +14,7 @@ primary_region = 'ams'
   DB_URL = 'main.db'
   PORT = '4200'
   SPOTIFY_CLIENT_ID = '1ec6cb1a181e47368d762606d2851929'
-  BASEURL='https://go-spordlfy.fly.dev'
+  BASEURL='https://gotify.fly.dev'
 
 [http_service]
   internal_port = 4200
