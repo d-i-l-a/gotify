@@ -1,0 +1,50 @@
+package view
+
+import "go-spordlfy/internal/models"
+import "fmt"
+
+
+
+templ AlbumInfo(album *models.Album) {
+    <div class="h-full flex flex-col">
+        <div class="flex flex-row grow-0">
+            <div>
+                <img class="size-32 rounded-md" src={album.Images[0].URL} alt={album.Name} />
+            </div>
+            <div class="flex flex-col ml-4">
+                <div class="text-3xl">{album.Name}</div>
+                <div class="text-lg">			
+                    for _, artist := range album.Artists {
+                        @ArtistLink(artist)
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="grow overflow-y-auto">
+            <ul class="list-none">
+                for number, track := range album.Tracks.Items {
+                    <li class="flex flex-row">
+                        <div class="min-w-5 mt-4">{fmt.Sprintf("%d", number + 1)}</div>
+                        <div class="flex flex-col m-2 " >
+                            <div id={"track:"+track.ID} class="cursor-pointer" onclick={playTrack(album.URI, track.URI, GetAccessToken(ctx))}>
+                                { track.Name }
+                            </div>
+                            <div class="flex flex-row gap-1 text-sm">
+                                for _, artist := range track.Artists {
+                                    @ArtistLink(artist)
+                                }
+                            </div>
+                        </div>
+                    </li>
+                }
+                
+            </ul>
+        </div>
+    </div>
+}
+
+templ ArtistLink(artist models.Artist) {
+    <div hx-get={"/artistinfo/" + artist.ID} hx-target="#main-canvas" class="cursor-pointer hover:text-gray-400">
+        { artist.Name } 
+    </div>
+}

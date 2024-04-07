@@ -1,0 +1,207 @@
+package view
+
+import "go-spordlfy/internal/models"
+
+templ Main(baseUrl string, accessToken string, loginLink string) {
+	<html>
+		<head>
+		  	<link href={ baseUrl + "/static/css/output.css" } rel="stylesheet"></link>
+  			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+			<script src="https://sdk.scdn.co/spotify-player.js"></script>
+			<script src={ baseUrl + "/static/js/player.js" }></script>
+			<style>
+				::-webkit-scrollbar {
+					width: 10px;
+				}
+
+				::-webkit-scrollbar-track {
+					background: #1e2125;
+					border-radius: 5px;
+				}
+
+				::-webkit-scrollbar-thumb {
+					background: #535657;
+					border-radius: 5px;
+				}
+
+				::-webkit-scrollbar-thumb:hover {
+					background: #b3b6b8;
+				}		
+
+			</style>
+		</head>
+		if (len(accessToken) != 0) {
+			@MainBody(accessToken)
+		} else {
+			@Login(baseUrl, loginLink)
+		}
+
+	</html>
+}
+
+
+templ MainBody(accessToken string) {
+		<body class="overflow-hidden bg-neutral-800">
+			<script>		
+				var deviceId;
+				var currentTrackId;
+
+				document.addEventListener("htmx:afterSwap", () => {
+					console.log("htmx:afterSwap");
+					markCurrentlyPlayedSong();
+				});
+				document.addEventListener("DOMContentLoaded", () => {
+				 	document.getElementById("player").addEventListener("player-ready", (e) => {
+						this.deviceId = e.detail;
+					});
+					document.getElementById("player").addEventListener("reload-queue", (e) => {
+						this.currentTrackId = e.detail;
+						this.markCurrentlyPlayedSong();
+					});
+				});	
+
+				function markCurrentlyPlayedSong() {
+						console.log("markCurrentlyPlayedSong", this.currentTrackId);
+						const elements = document.querySelectorAll('[id^="track:"]');
+						elements.forEach(element => {
+							element.classList.remove("text-green-400");
+						});
+						const playingTrackElement = document.getElementById("track:" + this.currentTrackId);
+						if (playingTrackElement) {
+							playingTrackElement.classList.add("text-green-400");
+						}
+				}
+
+				function showDiv(divNumber) {
+					console.log("showDiv", divNumber);
+					// remove selected styles from buttons
+					document.getElementById('btntracksearch').classList.add('bg-neutral-900', 'text-white');
+					document.getElementById('btnalbumsearch').classList.add('bg-neutral-900', 'text-white');
+					document.getElementById('btnpodcastsearch').classList.add('bg-neutral-900', 'text-white');
+					document.getElementById('btnmyplaylists').classList.add('bg-neutral-900', 'text-white');
+					// select button
+					document.getElementById('btn' + divNumber).classList.remove('bg-neutral-900', 'text-white');
+					document.getElementById('btn' + divNumber).classList.add('bg-green-500', 'text-black');
+					
+					// Hide all divs
+					document.getElementById('divtracksearch').classList.add('hidden');
+					document.getElementById('divalbumsearch').classList.add('hidden');
+					document.getElementById('divpodcastsearch').classList.add('hidden');
+					document.getElementById('divmyplaylists').classList.add('hidden');
+					
+					// Show the selected div
+					document.getElementById('div' + divNumber).classList.remove('hidden');
+				}
+
+				function playTrack(albumId, trackId, accessToken) {
+					fetch("https://api.spotify.com/v1/me/player/play?device_id=" + this.deviceId, {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + accessToken
+						},
+						body: JSON.stringify({
+							context_uri: albumId,
+							offset: {
+								uri: trackId
+							}
+						})
+					})
+				}
+
+				function playContext(contextId, accessToken) {
+					fetch("https://api.spotify.com/v1/me/player/play?device_id=" + this.deviceId, {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + accessToken
+						},
+						body: JSON.stringify({
+							context_uri: contextId,
+						})
+					})
+				}
+
+			</script>
+			<div class="flex flex-col h-screen">
+				<div class="flex basis-auto grow overflow-hidden" >
+					<div class="flex-shrink-0 w-1/4 bg-neutral-700 text-white p-2">
+
+						<div class="flex justify-between">
+							<button id="btntracksearch" onclick="showDiv('tracksearch')" class="bg-green-500 text-black text-sm py-2 px-4 rounded-full mx-1">Tracks</button>
+							<button id="btnalbumsearch" onclick="showDiv('albumsearch')" class="bg-neutral-900 text-sm py-2 px-4 rounded-full mx-1">Albums</button>
+							<button id="btnpodcastsearch" onclick="showDiv('podcastsearch')" class="bg-neutral-900 text-sm py-2 px-4 rounded-full mx-1">Podcasts</button>
+							<button id="btnmyplaylists" onclick="showDiv('myplaylists')" class="bg-neutral-900 text-sm py-2 px-4 rounded-full mx-1">My Playlists</button>
+						</div>
+						<div id="divtracksearch" class="flex flex-col m-2">
+							<input class="bg-neutral-900 grow h-10 px-5 pr-16 rounded-full text-sm "
+							type="text" name="search" hx-post="/searchtracks" hx-target="#searchTracḱResult" hx-trigger="input changed delay:200ms, search" placeholder="Search for tracks"/>
+							<div id="searchTracḱResult"></div>
+						</div>
+
+						<div id="divalbumsearch" class="flex flex-col m-2 hidden">
+							<input class="bg-neutral-900 grow h-10 px-5 pr-16 rounded-full text-sm "
+							type="text" name="search" hx-post="/searchalbums" hx-target="#searchAlbumResult" hx-trigger="input changed delay:200ms, search" placeholder="Search for albums"/>
+							<div id="searchAlbumResult"></div>
+						</div>
+
+						<div id="divpodcastsearch" class="hidden">
+							<h2>Div 3</h2>
+							<p>Not implemented</p>
+							</div>
+
+							<div id="divmyplaylists" class="hidden">
+								<div hx-get="/playlists" hx-trigger="load" id="playlists"></div>
+							</div>
+						</div>
+
+
+					<div class="flex-shrink-0 w-1/2 bg-neutral-700 text-white p-2"  >
+							<div id="main-canvas">
+							
+							</div>
+					</div>
+					<div class="flex-shrink-0 w-1/4 bg-neutral-700 text-white p-2"  >
+							<div hx-get="/queue" hx-trigger="reload-queue from:#player delay:300ms" hx-target="#queueResult" id="queue">
+							</div>
+						<div id="queueResult"></div>
+					</div>
+				</div>
+
+				<div class="w-full bg-neutral-900">
+					<spotify-web-player id="player" accesstoken={ accessToken }></spotify-web-player>
+				</div>
+			</div>
+		</body>
+}
+
+
+
+script gotoLoginLink(loginLink string) {
+	window.location.href = loginLink
+}
+
+templ Login(baseUrl string, loginLink string) {
+	<html>
+		<head>
+		  	<link href={ baseUrl + "/static/css/output.css" } rel="stylesheet"></link>
+		</head>
+		<body class="flex justify-center items-center h-screen bg-gray-100" >
+			<div class="bg-neutral-00">
+			    <button onclick={gotoLoginLink(loginLink)} class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
+        			Login
+   				 </button>
+			</div>
+		</body>
+	</html>
+}
+
+
+func GetAccessToken(ctx context.Context) string {
+	sessionCtxEntry := ctx.Value("session")
+	session, ok := sessionCtxEntry.(*models.UserSession)
+	if !ok {
+		panic("session in context is not a models.UserSession!")
+	}
+	return session.AccessToken
+}

@@ -1,0 +1,26 @@
+package view
+
+import "go-spordlfy/internal/models"
+
+
+templ Queue(queue *models.Queue) {
+    <h3 class="m-2">Queue</h3>
+    <ul>
+        <li>
+            <div class="flex m-2 text-green-400">
+                <img src={ queue.CurrentlyPlaying.Album.Images[0].URL } class="rounded-md size-5 mr-2"/>
+                { queue.CurrentlyPlaying.Name }
+            </div>
+        </li>
+        for _, q := range queue.Queue {
+            <li>
+                <div class="flex m-2">
+                    <img src={ q.Album.Images[0].URL } class="rounded-md size-5 mr-2"/>
+                    { q.Name }
+                </div>
+            </li>
+        }
+    </ul>
+    
+
+}

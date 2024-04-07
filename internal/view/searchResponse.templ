@@ -1,0 +1,75 @@
+package view
+
+import "go-spordlfy/internal/models"
+
+script playTrack(albumUri string, trackUri string, accessToken string) {
+	playTrack(albumUri, trackUri, accessToken)
+}
+
+script playAlbum(albumUri string, accessToken string) {
+	playContext(albumUri, accessToken)
+}
+
+templ SearchTracks(searchTrackResponse models.Tracks) {
+	if len(searchTrackResponse.Items) == 0 {
+		@NoResults()
+	} else {
+		<div>
+			<ul>
+				for _, track := range searchTrackResponse.Items[:10] {
+					<li>
+						<div class="flex m-2">
+							<img onclick={ playTrack(track.Album.URI, track.URI, GetAccessToken(ctx)) } src={ track.Album.Images[0].URL } class="cursor-pointer rounded-md size-11 mr-2"/>
+							<div class="flex flex-col">
+								<div hx-get={ "/albuminfo/" + track.Album.ID } hx-target="#main-canvas" class="cursor-pointer text-gray-200 hover:text-gray-400">
+									{ track.Name }
+								</div>
+								<div class="flex flex-row cursor-pointer text-sm text-gray-200 gap-1">
+									for _, artist := range track.Artists {
+                                    	@ArtistLink(artist)
+									}
+								</div>
+							</div>
+						</div>
+					</li>
+				}
+			</ul>
+		</div>
+	}
+}
+
+templ NoResults() {
+	<div>No results found</div>
+}
+
+templ SearchAlbums(searchAlbumResponse models.Albums) {
+	if len(searchAlbumResponse.Items) == 0 {
+		@NoResults()
+	} else {
+		<div>
+			<ul>
+				for _, album := range searchAlbumResponse.Items[:10] {
+					@AlbumListEntry(album)
+				}
+			</ul>
+		</div>
+	}
+}
+
+templ AlbumListEntry(album models.Album) {
+	<li>
+		<div class="flex m-2">
+			<img onclick={ playAlbum(album.URI, GetAccessToken(ctx)) } src={ album.Images[0].URL } class="rounded-md size-10 mr-2"/>
+			<div class="flex flex-col">
+				<div hx-get={ "/albuminfo/" + album.ID } hx-target="#main-canvas" class="cursor-pointer text-gray-200 hover:text-gray-400">
+					{ album.Name }
+				</div>
+				<div class="flex flex-row gap-1 text-sm text-gray-200">
+					for _, artist := range album.Artists {
+						@ArtistLink(artist)
+					}
+				</div>
+			</div>
+		</div>
+	</li>
+}

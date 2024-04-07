@@ -1,0 +1,24 @@
+package view
+
+import "go-spordlfy/internal/models"
+
+
+script playPlaylist(albumUri string, accessToken string) {
+	playContext(albumUri, accessToken)
+}
+
+
+templ PlayLists(playLists models.PlayLists) {
+      <ul>
+        for _, playList := range playLists.Items {
+          <li>
+            <div onclick={playPlaylist(playList.URI, GetAccessToken(ctx))} class="flex cursor-pointer m-2">
+              <img src={playList.Images[0].URL} alt="Trulli" class="rounded-md size-10 mr-2"></img> 
+              <div >{ playList.Name }</div>
+            </div>
+          </li>
+        }
+      </ul>	
+}
+
+
