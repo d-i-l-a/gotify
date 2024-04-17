@@ -57,6 +57,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	app.Handle("POST /searchtracks", http.HandlerFunc(SearchTracksHandler))
 	app.Handle("POST /searchalbums", http.HandlerFunc(SearchAlbumsHandler))
+	app.Handle("POST /search", http.HandlerFunc(SearchHandler))
 	app.Handle("GET /playlists", http.HandlerFunc(PlayListsHandler))
 
 	app.Handle("GET /albuminfo/{albumid}", http.HandlerFunc(AlbumInfoHandler))

@@ -579,10 +579,6 @@ video {
   display: flex;
 }
 
-.hidden {
-  display: none;
-}
-
 .size-10 {
   width: 2.5rem;
   height: 2.5rem;
@@ -676,10 +672,6 @@ video {
   justify-content: center;
 }
 
-.justify-between {
-  justify-content: space-between;
-}
-
 .gap-1 {
   gap: 0.25rem;
 }
@@ -742,10 +734,6 @@ video {
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-}
-
-.pr-16 {
-  padding-right: 4rem;
 }
 
 .text-3xl {

@@ -45,6 +45,7 @@ templ MainBody(accessToken string) {
 			<script>		
 				var deviceId;
 				var currentTrackId;
+				var selectedSearchType = "tracksearch";
 
 				document.addEventListener("htmx:afterSwap", () => {
 					console.log("htmx:afterSwap");
@@ -61,37 +62,32 @@ templ MainBody(accessToken string) {
 				});	
 
 				function markCurrentlyPlayedSong() {
-						console.log("markCurrentlyPlayedSong", this.currentTrackId);
-						const elements = document.querySelectorAll('[id^="track:"]');
-						elements.forEach(element => {
-							element.classList.remove("text-green-400");
-						});
-						const playingTrackElement = document.getElementById("track:" + this.currentTrackId);
-						if (playingTrackElement) {
-							playingTrackElement.classList.add("text-green-400");
-						}
+					console.log("markCurrentlyPlayedSong", this.currentTrackId);
+					const elements = document.querySelectorAll('[id^="track:"]');
+					elements.forEach(element => {
+						element.classList.remove("text-green-400");
+					});
+					const playingTrackElement = document.getElementById("track:" + this.currentTrackId);
+					if (playingTrackElement) {
+						playingTrackElement.classList.add("text-green-400");
+					}
 				}
-
+				
 				function showDiv(divNumber) {
-					console.log("showDiv", divNumber);
+					if(this.selectedSearchType == divNumber) {
+						return;
+					}
+					this.selectedSearchType = divNumber;
+					document.getElementById('searchInput').dispatchEvent(new Event("search"));
 					// remove selected styles from buttons
 					document.getElementById('btntracksearch').classList.add('bg-neutral-900', 'text-white');
 					document.getElementById('btnalbumsearch').classList.add('bg-neutral-900', 'text-white');
 					document.getElementById('btnpodcastsearch').classList.add('bg-neutral-900', 'text-white');
-					document.getElementById('btnmyplaylists').classList.add('bg-neutral-900', 'text-white');
 					// select button
 					document.getElementById('btn' + divNumber).classList.remove('bg-neutral-900', 'text-white');
 					document.getElementById('btn' + divNumber).classList.add('bg-green-500', 'text-black');
-					
-					// Hide all divs
-					document.getElementById('divtracksearch').classList.add('hidden');
-					document.getElementById('divalbumsearch').classList.add('hidden');
-					document.getElementById('divpodcastsearch').classList.add('hidden');
-					document.getElementById('divmyplaylists').classList.add('hidden');
-					
-					// Show the selected div
-					document.getElementById('div' + divNumber).classList.remove('hidden');
 				}
+
 
 				function playTrack(albumId, trackId, accessToken) {
 					fetch("https://api.spotify.com/v1/me/player/play?device_id=" + this.deviceId, {
@@ -127,34 +123,19 @@ templ MainBody(accessToken string) {
 				<div class="flex basis-auto grow overflow-hidden" >
 					<div class="flex-shrink-0 w-1/4 bg-neutral-700 text-white p-2">
 
-						<div class="flex justify-between">
+						<div class="flex grow gap-1">
 							<button id="btntracksearch" onclick="showDiv('tracksearch')" class="bg-green-500 text-black text-sm py-2 px-4 rounded-full mx-1">Tracks</button>
 							<button id="btnalbumsearch" onclick="showDiv('albumsearch')" class="bg-neutral-900 text-sm py-2 px-4 rounded-full mx-1">Albums</button>
 							<button id="btnpodcastsearch" onclick="showDiv('podcastsearch')" class="bg-neutral-900 text-sm py-2 px-4 rounded-full mx-1">Podcasts</button>
-							<button id="btnmyplaylists" onclick="showDiv('myplaylists')" class="bg-neutral-900 text-sm py-2 px-4 rounded-full mx-1">My Playlists</button>
 						</div>
-						<div id="divtracksearch" class="flex flex-col m-2">
-							<input class="bg-neutral-900 grow h-10 px-5 pr-16 rounded-full text-sm "
-							type="text" name="search" hx-post="/searchtracks" hx-target="#searchTracḱResult" hx-trigger="input changed delay:200ms, search" placeholder="Search for tracks"/>
-							<div id="searchTracḱResult"></div>
-						</div>
-
-						<div id="divalbumsearch" class="flex flex-col m-2 hidden">
-							<input class="bg-neutral-900 grow h-10 px-5 pr-16 rounded-full text-sm "
-							type="text" name="search" hx-post="/searchalbums" hx-target="#searchAlbumResult" hx-trigger="input changed delay:200ms, search" placeholder="Search for albums"/>
-							<div id="searchAlbumResult"></div>
-						</div>
-
-						<div id="divpodcastsearch" class="hidden">
-							<h2>Div 3</h2>
-							<p>Not implemented</p>
-							</div>
-
-							<div id="divmyplaylists" class="hidden">
-								<div hx-get="/playlists" hx-trigger="load" id="playlists"></div>
-							</div>
-						</div>
-
+						<input id="searchInput" class="flex bg-neutral-900 h-10 px-5 rounded-full text-sm m-2"
+						type="text" name="search" hx-post="/search" hx-target="#searchResult" hx-vals='js:{type: this.selectedSearchType}' 
+						hx-trigger="input changed delay:200ms, search" placeholder="Search for ..."/>
+						
+						<div class="flex flex-col m-2">
+							<div id="searchResult"></div>
+ 						</div>
+					</div>
 
 					<div class="flex-shrink-0 w-1/2 bg-neutral-700 text-white p-2"  >
 							<div id="main-canvas">

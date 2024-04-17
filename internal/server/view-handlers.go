@@ -6,6 +6,19 @@ import (
 	"net/http"
 )
 
+func SearchHandler(w http.ResponseWriter, r *http.Request) {
+	searchType := r.FormValue("type")
+	switch searchType {
+	case "tracksearch":
+		SearchTracksHandler(w, r)
+	case "albumsearch":
+		SearchAlbumsHandler(w, r)
+	default:
+		http.Error(w, "invalid search type", http.StatusBadRequest)
+		return
+	}
+}
+
 func SearchTracksHandler(w http.ResponseWriter, r *http.Request) {
 	session, ok := r.Context().Value(sessionContextKey).(*models.UserSession)
 	if !ok {
