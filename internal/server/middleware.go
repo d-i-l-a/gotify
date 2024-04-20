@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 	"go-spordlfy/internal/models"
+	"go-spordlfy/internal/view"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -23,10 +26,15 @@ func (s *Server) SessionMiddleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
+		if strings.HasPrefix(r.URL.Path, "/static") {
+			next.ServeHTTP(w, r)
+			return
+		}
 		session, err := s.loadUserSession(r)
 		if err != nil {
-			fmt.Println("no session found")
-			next.ServeHTTP(w, r)
+			baseUrl := os.Getenv("BASEURL")
+			w.Header().Set("HX-Retarget", "html")
+			view.Main(baseUrl, "", buildSpotifyURL()).Render(r.Context(), w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), "session", session)
@@ -37,6 +45,7 @@ func (s *Server) SessionMiddleware(next http.Handler) http.Handler {
 
 func (s *Server) loadUserSession(r *http.Request) (*models.UserSession, error) {
 	sessionCookie, err := r.Cookie("session_id")
+	fmt.Println("sessionCookie: ", sessionCookie)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +53,8 @@ func (s *Server) loadUserSession(r *http.Request) (*models.UserSession, error) {
 	if err != nil {
 		return nil, err
 	}
-	if session.ExpiryTime.Add(1 * time.Minute).Before(time.Now()) {
+	fmt.Println("session: ", session)
+	if session.ExpiryTime.Add(1 * time.Minute).After(time.Now()) {
 		err := s.RefreshAccessToken(session)
 		if err != nil {
 			return nil, err

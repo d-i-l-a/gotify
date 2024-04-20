@@ -2,22 +2,22 @@ package view
 
 import "go-spordlfy/internal/models"
 
-
 templ ArtistInfo(artist *models.Artist, albums *models.Albums, topTracks *models.TopTracksOfArtist) {
 	<div class="h-full flex flex-col">
-        <div class="flex flex-row">
-            <div class="grow">
-                <div class="flex flex-row m-2">
-                    <div class="text-3xl">{ artist.Name }</div>
-                </div>
+		<div class="flex flex-row">
+            <div>
+                <div class="text-3xl">{ artist.Name }</div>
+                <img class="size-60 rounded-md" src={ artist.Images[0].URL } alt={ artist.Name }/>
+            </div>
+            <div class="grow ml-5">
                 <div>
+                    <h3 class="text-neutral-300">
+                        Top Tracks
+                    </h3>
                     <div class="flex flex-col grow-0 m-2">
-                        <div class="text-xl">
-                            Top Tracks
-                        </div>
                         <ul>
                             for _, track := range topTracks.Tracks {
-                                <div id={"track:"+track.ID} class="cursor-pointer" onclick={playTrack(track.Album.URI, track.URI, GetAccessToken(ctx))}>
+                                <div id={ "track:" + track.ID } class="cursor-pointer hover:text-gray-400" onclick={ playTrack(track.Album.URI, track.URI, GetAccessToken(ctx)) }>
                                     { track.Name }
                                 </div>
                             }
@@ -25,14 +25,11 @@ templ ArtistInfo(artist *models.Artist, albums *models.Albums, topTracks *models
                     </div>
                 </div>
             </div>
-            <div class="m-2">
-                <img class="size-60 rounded-md" src={artist.Images[0].URL} alt={artist.Name} />
-            </div>
         </div>
+		<h3 class="text-neutral-300">
+			Albums
+		</h3>
 		<div class="grow overflow-y-auto">
-            <h3>
-                Albums
-            </h3>
 			<ul>
 				for _, album := range albums.Items {
 					@AlbumListEntry(album)
@@ -41,4 +38,3 @@ templ ArtistInfo(artist *models.Artist, albums *models.Albums, topTracks *models
 		</div>
 	</div>
 }
-

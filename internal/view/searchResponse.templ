@@ -19,7 +19,7 @@ templ SearchTracks(searchTrackResponse models.Tracks) {
 				for _, track := range searchTrackResponse.Items[:10] {
 					<li>
 						<div class="flex m-2">
-							<img onclick={ playTrack(track.Album.URI, track.URI, GetAccessToken(ctx)) } src={ track.Album.Images[0].URL } class="cursor-pointer rounded-md size-11 mr-2"/>
+							<img onclick={ playTrack(track.Album.URI, track.URI, GetAccessToken(ctx)) } src={ track.Album.Images[0].URL } class="cursor-pointer hover:opacity-75 rounded-md size-11 mr-2"/>
 							<div class="flex flex-col">
 								<div hx-get={ "/albuminfo/" + track.Album.ID } hx-target="#main-canvas" class="cursor-pointer text-gray-200 hover:text-gray-400">
 									{ track.Name }
@@ -59,7 +59,7 @@ templ SearchAlbums(searchAlbumResponse models.Albums) {
 templ AlbumListEntry(album models.Album) {
 	<li>
 		<div class="flex m-2">
-			<img onclick={ playAlbum(album.URI, GetAccessToken(ctx)) } src={ album.Images[0].URL } class="rounded-md size-10 mr-2"/>
+			<img onclick={ playAlbum(album.URI, GetAccessToken(ctx)) } src={ album.Images[0].URL } class="cursor-pointer hover:opacity-75 rounded-md size-10 mr-2"/>
 			<div class="flex flex-col">
 				<div hx-get={ "/albuminfo/" + album.ID } hx-target="#main-canvas" class="cursor-pointer text-gray-200 hover:text-gray-400">
 					{ album.Name }

@@ -15,7 +15,7 @@ templ Main(baseUrl string, accessToken string, loginLink string) {
 				}
 
 				::-webkit-scrollbar-track {
-					background: #1e2125;
+					background: #262626;
 					border-radius: 5px;
 				}
 
@@ -30,17 +30,6 @@ templ Main(baseUrl string, accessToken string, loginLink string) {
 
 			</style>
 		</head>
-		if (len(accessToken) != 0) {
-			@MainBody(accessToken)
-		} else {
-			@Login(baseUrl, loginLink)
-		}
-
-	</html>
-}
-
-
-templ MainBody(accessToken string) {
 		<body class="overflow-hidden bg-neutral-800">
 			<script>		
 				var deviceId;
@@ -119,9 +108,23 @@ templ MainBody(accessToken string) {
 				}
 
 			</script>
+
+		if (len(accessToken) != 0) {
+			@MainBody(accessToken)
+		} else {
+			@Login(baseUrl, loginLink)
+		}
+		</body>
+
+	</html>
+}
+
+
+templ MainBody(accessToken string) {
+		
 			<div class="flex flex-col h-screen">
-				<div class="flex basis-auto grow overflow-hidden" >
-					<div class="flex-shrink-0 w-1/4 bg-neutral-700 text-white p-2">
+				<div class="flex basis-auto grow overflow-hidden bg-neutral-800" >
+					<div class="flex-shrink-0 w-1/4 bg-neutral-700 text-white rounded-md my-2 ml-2 mr-1 p-2">
 
 						<div class="flex grow gap-1">
 							<button id="btntracksearch" onclick="showDiv('tracksearch')" class="bg-green-500 text-black text-sm py-2 px-4 rounded-full mx-1">Tracks</button>
@@ -137,12 +140,12 @@ templ MainBody(accessToken string) {
  						</div>
 					</div>
 
-					<div class="flex-shrink-0 w-1/2 bg-neutral-700 text-white p-2"  >
+					<div class="flex-shrink-0 grow bg-neutral-700 text-white rounded-md my-2 ml-1 mr-1 p-2"  >
 							<div id="main-canvas">
 							
 							</div>
 					</div>
-					<div class="flex-shrink-0 w-1/4 bg-neutral-700 text-white p-2"  >
+					<div class="flex-shrink-0 w-1/4 bg-neutral-700 text-white rounded-md my-2 ml-1 mr-2 p-2"  >
 							<div hx-get="/queue" hx-trigger="reload-queue from:#player delay:300ms" hx-target="#queueResult" id="queue">
 							</div>
 						<div id="queueResult"></div>
@@ -153,7 +156,6 @@ templ MainBody(accessToken string) {
 					<spotify-web-player id="player" accesstoken={ accessToken }></spotify-web-player>
 				</div>
 			</div>
-		</body>
 }
 
 
@@ -163,18 +165,14 @@ script gotoLoginLink(loginLink string) {
 }
 
 templ Login(baseUrl string, loginLink string) {
-	<html>
-		<head>
-		  	<link href={ baseUrl + "/static/css/output.css" } rel="stylesheet"></link>
-		</head>
-		<body class="flex justify-center items-center h-screen bg-gray-100" >
+
+		<div class="flex justify-center items-center h-screen bg-gray-100" >
 			<div class="bg-neutral-00">
 			    <button onclick={gotoLoginLink(loginLink)} class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
         			Login
    				 </button>
 			</div>
-		</body>
-	</html>
+		</div>
 }
 
 
