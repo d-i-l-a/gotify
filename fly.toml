@@ -1,20 +1,18 @@
-# fly.toml app configuration file generated for go-spordlfy-hidden-violet-3026 on 2024-04-04T17:22:02+02:00
+# fly.toml app configuration file generated for go-tify on 2024-04-21T11:37:35+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'gotify'
+app = 'go-tify'
 primary_region = 'ams'
 
-
-
-
+[build]
 
 [env]
+  BASEURL = 'https://go-tify.fly.dev'
   DB_URL = 'main.db'
   PORT = '4200'
   SPOTIFY_CLIENT_ID = '1ec6cb1a181e47368d762606d2851929'
-  BASEURL='https://gotify.fly.dev'
 
 [http_service]
   internal_port = 4200
