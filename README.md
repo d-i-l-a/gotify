@@ -1,13 +1,8 @@
-# Projects TODOs:
+[![Fly Deploy](https://github.com/d-i-l-a/gotify/actions/workflows/fly.yml/badge.svg)](https://github.com/d-i-l-a/gotify/actions/workflows/fly.yml)
 
-- make main gui nicer
-- dry it up
-- podcasts
-- 
+# go-spordlfy
 
-# Project go-spordlfy
-
-One Paragraph of project description goes here
+Educational project using Go, Templ, HTMX, Webcomponents and some VanillaJS to create a functional Spotify-webplayer.
 
 ## Getting Started
 
