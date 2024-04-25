@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-spordlfy/internal/server"
+	"gotify/internal/server"
 )
 
 func main() {

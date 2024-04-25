@@ -3,9 +3,8 @@ package server
 import (
 	"context"
 	"fmt"
-	"go-spordlfy/internal/models"
-	"go-spordlfy/internal/view"
-	"log"
+	"gotify/internal/models"
+	"gotify/internal/view"
 	"net/http"
 	"os"
 	"strings"
@@ -14,13 +13,15 @@ import (
 
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Request: %s %s", r.Method, r.URL)
+		fmt.Printf("RequestLoggingMiddleWare: %s %s", r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	})
 }
 
 func (s *Server) SessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("RequestSessionMiddleWare: %s %s \n", r.Method, r.URL)
+
 		//TODO: return 403 if no session found
 		if r.URL.Path == "/callback" {
 			next.ServeHTTP(w, r)
@@ -45,7 +46,6 @@ func (s *Server) SessionMiddleware(next http.Handler) http.Handler {
 
 func (s *Server) loadUserSession(r *http.Request) (*models.UserSession, error) {
 	sessionCookie, err := r.Cookie("session_id")
-	fmt.Println("sessionCookie: ", sessionCookie)
 	if err != nil {
 		return nil, err
 	}

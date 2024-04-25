@@ -60,7 +60,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	app.Handle("POST /search", http.HandlerFunc(SearchHandler))
 	app.Handle("GET /playlists", http.HandlerFunc(PlayListsHandler))
 
-	app.Handle("GET /albuminfo/{albumid}", http.HandlerFunc(AlbumInfoHandler))
+	app.Handle("GET /albuminfo/{albumid}", http.HandlerFunc(s.AlbumInfoHandler))
 	app.Handle("GET /artistinfo/{artistid}", http.HandlerFunc(ArtistInfoHandler))
 
 	app.Handle("GET /queue", http.HandlerFunc(QueueHandler))

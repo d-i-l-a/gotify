@@ -7,25 +7,28 @@ import (
 	"strconv"
 	"time"
 
-	"go-spordlfy/internal/database"
+	"gotify/internal/cache"
+	"gotify/internal/database"
 )
 
 type Server struct {
-	port int
-	db   database.Service
+	port  int
+	db    database.Service
+	cache cache.Cache
 }
 
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	NewServer := &Server{
-		port: port,
-		db:   database.New(),
+	redisAddr := os.Getenv("REDISURL")
+	newServer := &Server{
+		port:  port,
+		db:    database.New(),
+		cache: cache.New(redisAddr),
 	}
-
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
-		Handler:      NewServer.RegisterRoutes(),
+		Addr:         fmt.Sprintf(":%d", newServer.port),
+		Handler:      newServer.RegisterRoutes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,

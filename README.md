@@ -1,6 +1,6 @@
 [![Fly Deploy](https://github.com/d-i-l-a/gotify/actions/workflows/fly.yml/badge.svg)](https://github.com/d-i-l-a/gotify/actions/workflows/fly.yml)
 
-# go-spordlfy
+# gotify
 
 Educational project using Go, Templ, HTMX, Webcomponents and some VanillaJS to create a functional Spotify-webplayer.
 

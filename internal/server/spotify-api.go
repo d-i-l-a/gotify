@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"go-spordlfy/internal/models"
+	"gotify/internal/models"
 	"io"
 	"net/http"
 	"strings"
@@ -61,7 +61,13 @@ func Queue(accessToken string) (*models.Queue, error) {
 	return &queueResponse, nil
 }
 
-func AlbumInfo(accessToken string, albumId string) (*models.Album, error) {
+func (s *Server) AlbumInfo(accessToken string, albumId string) (*models.Album, error) {
+	var albumInfo models.Album
+	err := s.cache.GetStruct(albumId, albumInfo)
+	if err != nil {
+
+	}
+
 	responseBody, err := makeHttpRequest(http.MethodGet, "https://api.spotify.com/v1/albums/"+albumId, accessToken)
 	if err != nil {
 		return nil, err

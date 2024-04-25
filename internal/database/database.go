@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"go-spordlfy/internal/models"
+	"gotify/internal/models"
 	"log"
 	"os"
 	"time"

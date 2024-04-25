@@ -1,8 +1,8 @@
 package server
 
 import (
-	"go-spordlfy/internal/models"
-	"go-spordlfy/internal/view"
+	"gotify/internal/models"
+	"gotify/internal/view"
 	"net/http"
 )
 
@@ -90,7 +90,7 @@ func QueueHandler(w http.ResponseWriter, r *http.Request) {
 	view.Queue(queue).Render(r.Context(), w)
 }
 
-func AlbumInfoHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) AlbumInfoHandler(w http.ResponseWriter, r *http.Request) {
 	session, ok := r.Context().Value(sessionContextKey).(*models.UserSession)
 	if !ok {
 		http.Error(w, "failed to get session info", http.StatusInternalServerError)
@@ -102,7 +102,7 @@ func AlbumInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	albumInfo, err := AlbumInfo(session.AccessToken, albumID)
+	albumInfo, err := s.AlbumInfo(session.AccessToken, albumID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
