@@ -32,12 +32,7 @@ func TestWithRedis(t *testing.T) {
 		}
 	}()
 
-	endpoint, err := redisC.Endpoint(ctx, "")
-	if err != nil {
-		t.Error(err)
-	}
-
-	cache := cache.New(endpoint)
+	c := cache.New()
 
 	type Data struct {
 		Name string
@@ -49,10 +44,10 @@ func TestWithRedis(t *testing.T) {
 		Age:  30,
 	}
 
-	cache.SetStruct("testkey", data)
+	c.SetStruct("testkey", data)
 
 	otherData := Data{}
-	cache.GetStruct("testkey", &otherData)
+	c.GetStruct("testkey", &otherData)
 
 	if data == otherData {
 		log.Println("Sucess!")
@@ -60,4 +55,8 @@ func TestWithRedis(t *testing.T) {
 		log.Printf("In: %+v \n", data)
 		log.Printf("Out: %+v \n", otherData)
 	}
+
+	cacheMissData := Data{}
+	err = c.GetStruct("bar", &cacheMissData)
+
 }

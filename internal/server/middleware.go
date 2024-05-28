@@ -53,7 +53,6 @@ func (s *Server) loadUserSession(r *http.Request) (*models.UserSession, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("session: ", session)
 	if session.ExpiryTime.Add(1 * time.Minute).After(time.Now()) {
 		err := s.RefreshAccessToken(session)
 		if err != nil {

@@ -2,28 +2,27 @@ package server
 
 import (
 	"fmt"
+	"gotify/internal/cache"
+	"gotify/internal/database"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
-
-	"gotify/internal/cache"
-	"gotify/internal/database"
 )
 
 type Server struct {
-	port  int
-	db    database.Service
-	cache cache.Cache
+	port int
+	db   database.Service
+	c    cache.Cache
 }
 
 func NewServer() *http.Server {
+	cache := cache.New()
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	redisAddr := os.Getenv("REDISURL")
 	newServer := &Server{
-		port:  port,
-		db:    database.New(),
-		cache: cache.New(redisAddr),
+		port: port,
+		db:   database.New(),
+		c:    cache,
 	}
 	// Declare Server config
 	server := &http.Server{

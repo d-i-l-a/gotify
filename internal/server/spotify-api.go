@@ -3,7 +3,9 @@ package server
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"gotify/internal/cache"
 	"gotify/internal/models"
 	"io"
 	"net/http"
@@ -62,19 +64,31 @@ func Queue(accessToken string) (*models.Queue, error) {
 }
 
 func (s *Server) AlbumInfo(accessToken string, albumId string) (*models.Album, error) {
-	var albumInfo models.Album
-	err := s.cache.GetStruct(albumId, albumInfo)
-	if err != nil {
-
-	}
-
-	responseBody, err := makeHttpRequest(http.MethodGet, "https://api.spotify.com/v1/albums/"+albumId, accessToken)
+	var album models.Album
+	err := s.getFromCacheOrLoad(accessToken, albumId, &album)
 	if err != nil {
 		return nil, err
 	}
-	var album models.Album
-	json.Unmarshal(*responseBody, &album)
 	return &album, nil
+}
+
+func (s *Server) getFromCacheOrLoad(accessToken string, albumId string, album *models.Album) error {
+	err := s.c.GetStruct(albumId, &album)
+	if err != nil {
+		if errors.Is(err, cache.ErrMissingKey) {
+			fmt.Println("cache miss for key: ", albumId)
+			responseBody, err := makeHttpRequest(http.MethodGet, "https://api.spotify.com/v1/albums/"+albumId, accessToken)
+			if err != nil {
+				return err
+			}
+			json.Unmarshal(*responseBody, &album)
+			s.c.SetStruct(albumId, album)
+		}
+		return nil
+	}
+	fmt.Println("cache hit for key: ", albumId)
+
+	return nil
 }
 
 func ArtistInfo(accessToken string, artistId string) (*models.Artist, error) {
