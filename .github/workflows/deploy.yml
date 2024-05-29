@@ -36,8 +36,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          whoami
           docker pull dinolange203/gotify:latest
           docker stop gotify_run || true
           docker rm gotify_run || true
-          docker run -d -p 80:8080 --name gotify_run dinolange203/gotify:latest
+          docker run -p 80:8080 --name gotify_run dinolange203/gotify:latest
