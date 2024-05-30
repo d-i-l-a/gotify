@@ -25,7 +25,7 @@ COPY ./internal/static/js/player.js ./app/internal/static/js/player.js
 FROM alpine:latest as run
 WORKDIR /run
 COPY --from=build /work/app .
-EXPOSE 4200
+EXPOSE 80
 
 #ENTRYPOINT ["."]
 CMD ["./main"]
