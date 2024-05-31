@@ -37,7 +37,6 @@ templ Main(baseUrl string, accessToken string, loginLink string) {
 				var selectedSearchType = "tracksearch";
 
 				document.addEventListener("htmx:afterSwap", () => {
-					console.log("htmx:afterSwap");
 					markCurrentlyPlayedSong();
 				});
 				document.addEventListener("DOMContentLoaded", () => {
@@ -51,7 +50,6 @@ templ Main(baseUrl string, accessToken string, loginLink string) {
 				});	
 
 				function markCurrentlyPlayedSong() {
-					console.log("markCurrentlyPlayedSong", this.currentTrackId);
 					const elements = document.querySelectorAll('[id^="track:"]');
 					elements.forEach(element => {
 						element.classList.remove("text-green-400");
