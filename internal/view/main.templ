@@ -40,6 +40,7 @@ templ Main(baseUrl string, accessToken string, loginLink string) {
 					markCurrentlyPlayedSong();
 				});
 				document.addEventListener("DOMContentLoaded", () => {
+					console.log("DOMContentLoaded")
 				 	document.getElementById("player").addEventListener("player-ready", (e) => {
 						this.deviceId = e.detail;
 					});

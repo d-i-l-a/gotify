@@ -37,4 +37,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           docker compose -f go-app-compose.yaml down
+          docker compose -f go-app-compose.yaml pull
           docker compose -f go-app-compose.yaml up -d
