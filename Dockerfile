@@ -23,6 +23,7 @@ COPY ./internal/static/js/player.js ./app/internal/static/js/player.js
 
 
 FROM alpine:latest as run
+RUN apk --no-cache add ca-certificates
 WORKDIR /run
 COPY --from=build /work/app .
 EXPOSE 80

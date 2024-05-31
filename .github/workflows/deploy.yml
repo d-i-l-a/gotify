@@ -36,7 +36,5 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          docker pull dinolange203/gotify:latest
-          docker stop gotify_run || true
-          docker rm gotify_run || true
-          docker run -p 80:8080 --name gotify_run dinolange203/gotify:latest
+          docker compose -f go-app-compose.yaml down
+          docker compose -f go-app-compose.yaml up -d
