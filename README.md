@@ -1,4 +1,4 @@
-[![Fly Deploy](https://github.com/d-i-l-a/gotify/actions/workflows/fly.yml/badge.svg)](https://github.com/d-i-l-a/gotify/actions/workflows/fly.yml)
+[![.github/workflows/deploy.yml](https://github.com/d-i-l-a/gotify/actions/workflows/deploy.yml/badge.svg)](https://github.com/d-i-l-a/gotify/actions/workflows/deploy.yml)
 
 # gotify
 
